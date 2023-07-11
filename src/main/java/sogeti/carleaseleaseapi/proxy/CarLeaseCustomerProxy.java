@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(name = "carlease-customer", url = "localhost:8082")
+//@FeignClient(name = "carlease-customer", url = "localhost:8082")
+@FeignClient(name = "carlease-customer")
 public interface CarLeaseCustomerProxy {
 
     @GetMapping("/v1/customers/{customerId}")
