@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -53,7 +53,7 @@ public class ProposalController implements V1Api {
     }
 
     @Override
-    @PreAuthorize("ADMIN")
+//    @PreAuthorize("ADMIN")
     public ResponseEntity<List<ProposalResponse>> listProposalsV1() {
         List<Proposal> proposals = proposalService.retrieveAll();
         List<ProposalResponse> proposalResponses = proposals.stream()

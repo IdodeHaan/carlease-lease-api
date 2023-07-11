@@ -2,16 +2,13 @@ package sogeti.carleaseleaseapi.service;
 
 import com.sogeti.carleasecarcontractapi.openapi.model.CalculationRequestBody;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import sogeti.carleaseleaseapi.exceptionhandling.ResourceNotFoundException;
 import sogeti.carleaseleaseapi.model.Proposal;
+import sogeti.carleaseleaseapi.proxy.CarLeaseCustomerProxy;
 import sogeti.carleaseleaseapi.repository.ProposalRepository;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,10 +16,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProposalService {
 
-    @Value("${customer.url}")
-    private String customerUrl;
     private final ProposalRepository proposalRepository;
     private final CarService carService;
+    private final CarLeaseCustomerProxy proxy;
 
     public Proposal add(Proposal proposal, String authToken) throws Exception {
         isCustomerExisting(proposal.getCustomerId(), authToken);
@@ -34,20 +30,9 @@ public class ProposalService {
 
     public void isCustomerExisting(long customerId, String authToken) throws Exception {
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-            headers.add("Authorization", authToken );
-
-            RestTemplate restTemplate = new RestTemplate();
-            String customerUrl = this.customerUrl + customerId;
-
-            ResponseEntity<String> response = restTemplate.exchange(
-                    customerUrl,
-                    HttpMethod.GET,
-                    new HttpEntity<>("parameters", headers),
-                    String.class);
+            proxy.getCustomerByIdV1(customerId, authToken);
         } catch (Exception exception) {
-            if (exception.getMessage().startsWith("404")) {
+            if (exception.getMessage().contains("404")) {
                 throw new ResourceNotFoundException("Customer not found - id " + customerId);
             } else {
                 throw new RuntimeException(exception.getMessage(), exception.getCause());
